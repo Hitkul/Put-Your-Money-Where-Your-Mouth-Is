@@ -4,6 +4,7 @@ import requests
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 
 
 ################ Logging Setup ##################
@@ -56,8 +57,10 @@ def create_user_directory_str(user_id):
 
 
 def load_web_page(url):
+    ua = UserAgent()
+    header = {'User-Agent':str(ua.chrome)}
     logger.info(f"loading page {url}")
-    page = requests.get(url)
+    page = requests.get(url, headers=header)
     logger.info(f"done loading page, Status code {page.status_code}")
     assert page.status_code==200
     return page
