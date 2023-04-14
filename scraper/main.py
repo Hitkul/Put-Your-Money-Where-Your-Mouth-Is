@@ -5,6 +5,10 @@ import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
+from utils import *
+from user_profile import *
+
+
 ################ Logging Setup ##################
 logger = logging.getLogger(f"Stickk data collector - {__name__}")
 logger.setLevel(logging.DEBUG)
@@ -30,14 +34,7 @@ try:
         counter = json.load(fp)
 except:
     logger.info("counter file not present, creating new")
-    counter = {"last id completed":0,
-    "Number of public profiles":0,
-    "Number of private profiles":0,
-    "Number of active commitments":0,
-    "Number of completed commitments":0}
-
-    with open("../data/counter.json",'w') as fp:
-        json.dump(counter, fp, indent=4)
+    counter = create_counter_file()
 
 logger.info("Reading ../data/private_users.txt")
 try:
@@ -47,14 +44,19 @@ try:
     private_users = [int(i.strip()) for i in private_users]
 except:
     logger.info("private_user file not present, creating new")
-    private_users = []
-    with open("../data/private_users.txt",'w') as fp:
-        fp.write("\n".join(private_users))
+    private_users = create_private_user_file()
 
 logger.info("Starting main loop")
 while True:
     user_id_to_scrape = counter['last id completed']+1
     logger.info(f"Staring scraping for user id {user_id_to_scrape}")
-    
+
+    logger.info(f"Creating directory str for {user_id_to_scrape}")
+    create_user_directory_str(user_id_to_scrape)
+
+    logger.info(f"Feathing main user page for id {user_id_to_scrape}")
+    fetch_user_profile_page(user_id_to_scrape)
+
+
 
 
