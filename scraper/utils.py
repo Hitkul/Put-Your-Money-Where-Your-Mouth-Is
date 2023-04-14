@@ -38,12 +38,20 @@ def create_counter_file():
 
     return counter
 
+def dump_counter_file(counter):
+    with open("../data/counter.json",'w') as fp:
+        json.dump(counter, fp, indent=4)
+
 def create_private_user_file():
     private_users = []
     with open("../data/private_users.txt",'w') as fp:
         fp.write("\n".join(private_users))
 
     return private_users
+
+def dump_private_user_file(private_users):
+    with open("../data/private_users.txt",'w') as fp:
+        fp.write("\n".join(private_users))
 
 def create_user_directory_str(user_id):
     if os.path.exists(f"../data/users/{user_id}"):
@@ -52,6 +60,7 @@ def create_user_directory_str(user_id):
     
     os.mkdir(f"../data/users/{user_id}")
     os.mkdir(f"../data/users/{user_id}/completed_commitments")
+    os.mkdir(f"../data/users/{user_id}/completed_commitments/photos")
     os.mkdir(f"../data/users/{user_id}/active_commitments")
     os.mkdir(f"../data/users/{user_id}/HTML_dumps")
 
@@ -61,7 +70,7 @@ def load_web_page(url):
     header = {'User-Agent':str(ua.chrome)}
     logger.info(f"loading page {url}")
     page = requests.get(url, headers=header)
-    logger.info(f"done loading page, Status code {page.status_code}")
+    logger.debug(f"done loading page, Status code {page.status_code}")
     assert page.status_code==200
     return page
 
@@ -77,4 +86,4 @@ def dump_HTML_file(page,path):
 
 
 if __name__=="__main__":
-    create_user_directory_str(2)
+    create_user_directory_str(929427)

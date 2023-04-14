@@ -55,7 +55,48 @@ while True:
     create_user_directory_str(user_id_to_scrape)
 
     logger.info(f"Feathing main user page for id {user_id_to_scrape}")
-    fetch_user_profile_page(user_id_to_scrape)
+    main_page_soup = fetch_user_profile_page(user_id_to_scrape)
+
+    logger.info(f"Checking if user {user_id_to_scrape} is present")
+    is_present = is_user_present(main_page_soup)
+
+    if not is_present:
+        logger.info(f"{user_id_to_scrape} not found, seems like this is the end, dumping files and exiting")
+
+        logger.info(f"deleting directory ../data/users/{user_id_to_scrape}")
+        os.rmdir(f"../data/users/{user_id_to_scrape}")
+        dump_counter_file(counter)
+        dump_private_user_file(private_users)
+        
+        break
+
+    logger.info(f"{user_id_to_scrape} is present")
+
+    logger.info(f"Checking if user {user_id_to_scrape} is private")
+    is_private = is_user_private(main_page_soup)
+
+    if is_private:
+        logger.info(f"{user_id_to_scrape} is private, adding it to the list, and dumping file to disk")
+        
+        private_users.append(user_id_to_scrape)
+        dump_private_user_file(private_users)
+
+        counter["Number of private profiles"]+=1
+        counter["last id completed"]+=1
+        dump_counter_file(counter)
+
+        continue
+
+    logger.info(f"{user_id_to_scrape} is public")
+    counter["Number of public profiles"]+=1
+
+
+    #TODO: Scraper user info
+    #TODO: Scraper Active commitment links
+    #TODO: Scraper Completed commitments links
+    #TODO: Scrape Active commitments details
+    #TODO: Scrape Completed commitments details + Reports + Posts + photos
+    
 
 
 
