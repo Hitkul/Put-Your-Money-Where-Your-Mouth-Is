@@ -163,8 +163,9 @@ def scrape_commitment_details(link_to_commitment,user_id):
 
     logger.info("Scraping commitment results")
     commitment_results_div = commitment_page_soup.find('div',class_ = 'commitmentDetailsDetailsSuccessContainer')
-    details['Successful Periods'] = commitment_results_div.find('div',class_='successfulPeriods').text.split(":")[-1].strip()
-    details['Unsuccessful Periods'] = commitment_results_div.find('div',class_='failedPeriods').text.split(":")[-1].strip()
+    if commitment_results_div:
+        details['Successful Periods'] = commitment_results_div.find('div',class_='successfulPeriods').text.split(":")[-1].strip()
+        details['Unsuccessful Periods'] = commitment_results_div.find('div',class_='failedPeriods').text.split(":")[-1].strip()
 
     right_containers = commitment_page_soup.find('div',id='membersCommitmentsRightContainer')
 
@@ -212,6 +213,8 @@ def scrape_commitment_page(link_to_commitment, is_active,user_id):
 
     if is_active:
         return details
+    
+    return details
 
 
 

@@ -62,7 +62,6 @@ def create_user_directory_str(user_id):
     
     os.mkdir(f"../data/users/{user_id}")
     os.mkdir(f"../data/users/{user_id}/completed_commitments")
-    os.mkdir(f"../data/users/{user_id}/completed_commitments/photos")
     os.mkdir(f"../data/users/{user_id}/active_commitments")
     os.mkdir(f"../data/users/{user_id}/HTML_dumps")
 

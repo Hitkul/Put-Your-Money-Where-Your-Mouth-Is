@@ -128,7 +128,7 @@ for user_id_to_scrape in [233320,429276]:
     else:
         logger.info(f"No completed commitments for {user_id_to_scrape}")
 
-    #TODO: Scrape Active commitments details
+    
     if active_commitments_present:
         logger.info(f"Scraping details of active commitments for {user_id_to_scrape}")
 
@@ -140,7 +140,20 @@ for user_id_to_scrape in [233320,429276]:
 
     
     #TODO: Scrape Completed commitments details + Reports + Posts + photos
-    
+    if completed_commitments_present:
+        logger.info(f"Scraping details of completed commitments for {user_id_to_scrape}")
+
+        for k,v in completed_commitments.items():
+            logger.info(f"Scraping details of {k} | {v}")
+            commitment_details = scrape_commitment_page(k,False,user_id_to_scrape)
+
+            logger.info(f"creating directory for commitment {commitment_details['Contract ID']}")
+            if not os.path.exists(f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}"):
+                os.mkdir(f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}")
+                os.mkdir(f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/photos")
+
+            dump_json(commitment_details, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/details.json")
+
     dump_counter_file(counter)
     dump_private_user_file(private_users)
     
