@@ -77,10 +77,11 @@ def load_web_page(url):
 
     ua = UserAgent()
     header = {'User-Agent':str(ua.chrome)}
-    
+
     logger.info(f"loading page {url}")
     last_request_time = time.time()
     page = requests.get(url, headers=header)
+    
     logger.debug(f"done loading page, Status code {page.status_code}")
     assert page.status_code==200
     return page
@@ -99,6 +100,17 @@ def dump_json(content, path):
     logger.info(f"Dumping as Json at {path}")
     with open(path,'w') as fp:
         json.dump(content,fp,indent=4)
+
+def number_of_pages(list_view):
+    pager_div = list_view.find('div',class_='pager')
+
+    if pager_div:
+        last_element = pager_div.find('li',class_='last')
+        href_text = last_element.find('a')['href']
+        return int(href_text.split("page=")[-1].strip())
+
+    return 1
+
 
 
 if __name__=="__main__":
