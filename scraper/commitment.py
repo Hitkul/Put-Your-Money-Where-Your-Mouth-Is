@@ -45,6 +45,8 @@ def check_commitment_status(soup):
 
     return active_commitments_present, completed_commitments_present
 
+############################----- ACTIVE COMMITMENT CODE -----############################
+
 def scrape_active_commitments_listview(active_commitments_listview):
     active_commitments_page = {}
     items_div = active_commitments_listview.find('div',class_='items')
@@ -90,6 +92,51 @@ def scrape_active_commitments_links(user_id,main_page_soup):
     return active_commitments
 
 
+############################----- COMPLETED COMMITMENT CODE -----############################
+def scrape_completed_commitments_listview(completed_commitments_listview):
+    completed_commitments_page = {}
+    items_div = completed_commitments_listview.find('div',class_='items')
+    commitment_items = items_div.find_all('div',class_=['commitmentRow','othersCommitmentRow'])
+    for c_item in commitment_items:
+        title_div = c_item.find('div',class_=['container','commitmentInfo','commitmentTitle'])
+        title_a_tag = title_div.find('a')
+        completed_commitments_page['https://www.stickk.com'+title_a_tag['href']] = title_a_tag.text.strip()
+    
+    return completed_commitments_page
+
+
+def load_completed_commitment_page(user_id,page_number):
+    url = f'https://www.stickk.com/commitment/{user_id}?ajax=yw2&id_page={page_number}'
+    page = load_web_page(url)
+    page_soup = make_soup_object(page)
+    dump_HTML_file(page,f"../data/users/{user_id}/HTML_dumps/completed_page_{page_number}.html")
+    return page_soup
+
+
+def scrape_completed_commitments_links(user_id,main_page_soup):
+    completed_commitments = {}
+
+    commitments_div_soup = main_page_soup.find(id='commitmentListContainer')
+    completed_commitments_div = commitments_div_soup.find(id='commitmentListContainer_tab_1')
+    completed_commitments_listview = completed_commitments_div.find(id='yw2')
+
+    total_page_numbers = number_of_pages(completed_commitments_listview)
+
+    logger.info(f"scraping completed commitments on page 1, total pages {total_page_numbers}")
+
+    completed_commitments.update(scrape_completed_commitments_listview(completed_commitments_listview))
+
+    if total_page_numbers>1:
+        for page_number in range(2, total_page_numbers+1):
+            logger.info(f"scraping completed commitments on page {page_number}, total pages {total_page_numbers}") 
+            main_page_soup = load_completed_commitment_page(user_id,page_number)
+
+            commitments_div_soup = main_page_soup.find(id='commitmentListContainer')
+            completed_commitments_div = commitments_div_soup.find(id='commitmentListContainer_tab_1')
+            completed_commitments_listview = completed_commitments_div.find(id='yw2')
+            completed_commitments.update(scrape_completed_commitments_listview(completed_commitments_listview))
+
+    return completed_commitments
 
 
 

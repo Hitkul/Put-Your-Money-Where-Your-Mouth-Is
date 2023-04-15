@@ -48,12 +48,11 @@ except:
     private_users = create_private_user_file()
 
 
-# for user_id_to_scrape in [1,233320,721182]:
 logger.info("Starting main loop")
 # while True:
 #     user_id_to_scrape = counter['last id completed']+1
 
-for user_id_to_scrape in [1,233320,721182]:
+for user_id_to_scrape in [429427,1,233320]:
     logger.info(f"Staring scraping for user id {user_id_to_scrape}")
 
     logger.info(f"Creating directory str for {user_id_to_scrape}")
@@ -107,7 +106,7 @@ for user_id_to_scrape in [1,233320,721182]:
     active_commitments_present, completed_commitments_present = check_commitment_status(main_page_soup)
     logger.debug(f"Commitment status for {user_id_to_scrape} ACTIVE {active_commitments_present}, COMPLETED {completed_commitments_present}")
 
-    #TODO: Scraper Active commitment links
+    
     if active_commitments_present:
         logger.info(f"Collecting links of active commitments")
         active_commitments = scrape_active_commitments_links(user_id_to_scrape,main_page_soup)
@@ -118,9 +117,21 @@ for user_id_to_scrape in [1,233320,721182]:
     else:
         logger.info(f"No active commitmtents for {user_id_to_scrape}")
 
+    
+    if completed_commitments_present:
+        logger.info(f"Collecting links of completed commitments")
+        completed_commitments = scrape_completed_commitments_links(user_id_to_scrape,main_page_soup)
+
+        logger.info(f"{len(completed_commitments)} found, updating the counter and dumping to file")
+        counter['Number of completed commitments']+=len(completed_commitments)
+        dump_json(completed_commitments, f"../data/users/{user_id_to_scrape}/completed.json")
+    else:
+        logger.info(f"No completed commitments for {user_id_to_scrape}")
+
 
     dump_counter_file(counter)
-    #TODO: Scraper Completed commitments links
+    dump_private_user_file(private_users)
+    
     #TODO: Scrape Active commitments details
     #TODO: Scrape Completed commitments details + Reports + Posts + photos
     
