@@ -223,10 +223,37 @@ def scrape_posts(commitment_page_soup):
         post_dict['author_link'] = wall_post.find('a',class_='avatarContainer avatarContainerTiny')['href']
         post_dict['time'] = wall_post.find('div',class_='postTime').text.strip()
         post_dict['text'] = wall_post.find('td',class_='text').text.strip()
+        
+        img_li = wall_post.find('li',class_='albumUploadContainer')
+        if img_li:
+            post_dict['img src'] = img_li.find('img')['src']
 
         posts.append(post_dict)
 
     return posts
+
+def scrape_photos(commitment_page_soup):
+    photos = []
+    wall_photos_list_view = commitment_page_soup.find('div',id='albumContainer')
+    items_ul = wall_photos_list_view.find('ul',class_='items')
+
+    if items_ul.find('span',class_='empty'):
+        logger.info("No photos available in this commitment")
+        return photos
+
+    for ph_tags in items_ul.find_all('li',class_='albumUploadContainer'):
+        photo_dict = {}
+        photo_dict['date'] = ph_tags.find('div',class_='date').text.strip()
+        photo_dict['title'] = ph_tags.find('a')['title'].strip()
+        photo_dict['src'] = ph_tags.find('img')['src']
+
+        photos.append(photo_dict)
+
+    return photos
+    
+
+def scrape_reports(commitment_page_soup):
+    
 
 
 
@@ -237,14 +264,18 @@ def scrape_commitment_page(link_to_commitment, is_active,user_id):
         return details
 
     posts = scrape_posts(commitment_page_soup)
+    photos = scrape_photos(commitment_page_soup)
     
-    return details,posts
+    return details,posts,photos
 
 
 
 if __name__ == "__main__":
     from pprint import pprint
-    pprint(scrape_commitment_details('https://www.stickk.com/commitment/details/1009376', True,233320))
+    details,posts,photos = scrape_commitment_page('https://www.stickk.com/commitment/details/1012241', False,732608)
+    pprint(details)
+    pprint(posts)
+    pprint(photos)
     # load_active_commitment_page(721182,2)
     # from user_profile import *
     # for i in [234678,1,724678,233320]:
