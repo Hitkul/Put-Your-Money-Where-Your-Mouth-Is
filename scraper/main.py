@@ -90,8 +90,15 @@ while True:
     logger.info(f"{user_id_to_scrape} is public")
     counter["Number of public profiles"]+=1
 
+    
+    logger.info(f"Scraping profile info for {user_id_to_scrape}")
+    user_info = scrape_user_info(main_page_soup)
 
-    #TODO: Scraper user info
+    logger.info(f"user info extracted,dumping to file now")
+    dump_json(user_info,f'../data/users/{user_id_to_scrape}/userinfo.json')
+
+
+
     #TODO: Scraper Active commitment links
     #TODO: Scraper Completed commitments links
     #TODO: Scrape Active commitments details

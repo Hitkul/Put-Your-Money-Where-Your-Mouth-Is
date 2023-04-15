@@ -54,8 +54,32 @@ def is_user_private(soup):
     
     return False
 
+def scrape_user_info(soup):
+    user_info = {}
+    profile_side_container = soup.find(id='othersProfileSideContainer')
+    
+    profile_image_div = profile_side_container.find(id='othersProfileWidgetImage')
+    user_info["img_link"] = profile_image_div.find('img')['src'].strip()
+
+    profile_username_div = profile_side_container.find(id='othersProfileUsername')
+    user_info["username"] = profile_username_div.text.strip()
+
+    profile_other_info_div = profile_side_container.find(id='othersProfileInfoContainer')
+
+    user_info["location"] = profile_other_info_div.find(id='othersProfileLocation').text.strip()
+    user_info["joined_date"] = profile_other_info_div.find(id='othersProfileJoinedDate').text.strip()
+    user_info["intrest"] = profile_other_info_div.find(id='topProfileInterests').text.strip()
+    user_info["message"] = profile_other_info_div.find(id='topProfileMessage').text.strip()
+
+    for k,v in user_info.items():
+        if v == "":
+            user_info[k]=None
+
+    return user_info
+
+
 
 
 if __name__ == "__main__":
-    foo = fetch_user_profile_page(1)
-    print(is_user_present(foo))
+    foo = fetch_user_profile_page(233320)
+    scrape_user_info(foo)

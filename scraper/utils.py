@@ -5,6 +5,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
+import time
 
 
 ################ Logging Setup ##################
@@ -25,6 +26,7 @@ logger.addHandler(c_handler)
 logger.addHandler(f_handler)
 ###############################################
 
+last_request_time = 0
 
 def create_counter_file():
     counter = {"last id completed":0,
@@ -66,9 +68,18 @@ def create_user_directory_str(user_id):
 
 
 def load_web_page(url):
+    global last_request_time
+
+    logger.info("checking if last request was more then a second ago or not")
+    if (time.time() - last_request_time) < 1.0:
+        logger.info("sleeping for a second to reduce request load")
+        time.sleep(1.0-(time.time() - last_request_time))
+
     ua = UserAgent()
     header = {'User-Agent':str(ua.chrome)}
+    
     logger.info(f"loading page {url}")
+    last_request_time = time.time()
     page = requests.get(url, headers=header)
     logger.debug(f"done loading page, Status code {page.status_code}")
     assert page.status_code==200
@@ -84,6 +95,11 @@ def dump_HTML_file(page,path):
     with open(path, 'wb+') as f:
         f.write(page.content)
 
+def dump_json(content, path):
+    logger.info(f"Dumping as Json at {path}")
+    with open(path,'w') as fp:
+        json.dump(content,fp,indent=4)
+
 
 if __name__=="__main__":
-    create_user_directory_str(929427)
+    create_user_directory_str(233320)
