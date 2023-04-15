@@ -1,11 +1,12 @@
 import json
-import os
-import requests
 import logging
+import os
+import time
 from logging.handlers import TimedRotatingFileHandler
+
+import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
-import time
 
 ################ Logging Setup ##################
 logger = logging.getLogger(f"Stickk data collector - {__name__}")

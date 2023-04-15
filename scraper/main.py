@@ -1,16 +1,14 @@
 import json
-from tqdm import tqdm
-import time 
-import os
 import logging
+import os
+import shutil
+import time
 from logging.handlers import TimedRotatingFileHandler
 
-from utils import *
+from commitment import *
+from tqdm import tqdm
 from user_profile import *
-
-import shutil
-
-
+from utils import *
 
 ################ Logging Setup ##################
 logger = logging.getLogger(f"Stickk data collector - {__name__}")

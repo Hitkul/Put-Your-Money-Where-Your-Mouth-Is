@@ -1,9 +1,10 @@
 import json
-from tqdm import tqdm
-import time 
-import os
 import logging
+import os
+import time
 from logging.handlers import TimedRotatingFileHandler
+
+from tqdm import tqdm
 from utils import *
 
 ################ Logging Setup ##################
