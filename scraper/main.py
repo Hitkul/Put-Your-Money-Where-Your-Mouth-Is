@@ -102,14 +102,12 @@ while True:
     logger.info(f"user info extracted,dumping to file now")
     dump_json(user_info,f'../data/users/{user_id_to_scrape}/userinfo.json')
 
-    #TODO: check commitment status
-    # No commitments at all 234678
-    # no active but completed 1
-    # active but not completed 724678
-    # both active and completed 233320
+    logger.info(f"Checking commitment status for {user_id_to_scrape}")
+
+    active_commitments_present, completed_commitments_present = check_commitment_status(main_page_soup)
+    logger.debug(f"Commitment status for {user_id_to_scrape} ACTIVE {active_commitments_present}, COMPLETED {completed_commitments_present}")
 
     #TODO: Scraper Active commitment links
-
     #TODO: Scraper Completed commitments links
     #TODO: Scrape Active commitments details
     #TODO: Scrape Completed commitments details + Reports + Posts + photos

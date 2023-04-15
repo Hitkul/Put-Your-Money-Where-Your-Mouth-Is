@@ -101,4 +101,5 @@ def dump_json(content, path):
 
 
 if __name__=="__main__":
-    create_user_directory_str(233320)
+    for i in [234678,1,724678,233320]:
+        create_user_directory_str(i)
