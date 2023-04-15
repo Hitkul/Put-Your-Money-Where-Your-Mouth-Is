@@ -114,5 +114,4 @@ def number_of_pages(list_view):
 
 
 if __name__=="__main__":
-    for i in [234678,1,724678,233320]:
-        create_user_directory_str(i)
+    create_user_directory_str(429276)

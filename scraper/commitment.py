@@ -139,46 +139,86 @@ def scrape_completed_commitments_links(user_id,main_page_soup):
     return completed_commitments
 
 
-def scrape_commitment_details(link_to_commitment, is_active,user_id):
+def scrape_commitment_details(link_to_commitment,user_id):
     details = {}
     commitment_page = load_web_page(link_to_commitment)
     commitment_page_soup = make_soup_object(commitment_page)
 
+    logger.info("Basic details extraction")
     details['title'] = commitment_page_soup.find('span',id = 'commitmentTitle').text.strip()
-    details['description'] = commitment_page_soup.find('div',id = 'commitmentSummaryICommitToText').text.strip()
+    description_tag = commitment_page_soup.find('div',id = 'commitmentSummaryICommitToText')
+    if not description_tag:
+        description_tag = commitment_page_soup.find('div',id = 'iCommitToTitleText')
+    details['description'] = description_tag.text.strip()
 
-    details_dialog_div = commitment_page_soup.find('div',id='commitmentDetailsDialog')
+    logger.info("Scraping Details dialog")
+    details_dialog_div = commitment_page_soup.find('div',id='commitmentDetailsDialogContent')
     details_dialog_content_div = details_dialog_div.find('div',class_=['stickkContainer02','content'])
     
     for c_item in details_dialog_content_div.find_all('div'):
-        label_text = c_item.find('span',class_='label').text.strip()
-        label_value = c_item.find('span',class_='cell2').text.strip()
+        label_text = c_item.find('span',class_='label')
+        label_value = c_item.find('span',class_='cell2')
         if label_text and label_value:
-            details[label_text] = label_value
+            details[label_text.text[:-1].strip()] = label_value.text.strip()
 
+    logger.info("Scraping commitment results")
     commitment_results_div = commitment_page_soup.find('div',class_ = 'commitmentDetailsDetailsSuccessContainer')
-    details['Successful Periods'] = commitment_results_div.find('div',class_='successfulPeriods').text.strip()
-    details['Unsuccessful Periods'] = commitment_results_div.find('div',class_='failedPeriods').text.strip()
+    details['Successful Periods'] = commitment_results_div.find('div',class_='successfulPeriods').text.split(":")[-1].strip()
+    details['Unsuccessful Periods'] = commitment_results_div.find('div',class_='failedPeriods').text.split(":")[-1].strip()
 
     right_containers = commitment_page_soup.find('div',id='membersCommitmentsRightContainer')
 
+    logger.info("Scraping Stakes info")
     details['stakes_details']={}
-    stakes_div = right_containers.find('div',class_=['financialColumn','stickkContainer05', 'p-2'])
+    stakes_div = right_containers.find('div',class_='financialColumn stickkContainer05 p-2')
+    
     if stakes_div:
-        pass
+        details['stakes_details']['recipient'] = stakes_div.find('div',class_='stakeRecipient mt-2').text.strip()
+
+        stakes_details_div = stakes_div.find('div',class_='financialDetails mt-2') 
+        for item_div in stakes_details_div.find_all('div'):
+            label_text = item_div.find('span',class_='label')
+            label_value = item_div.find('span',class_='value')
+            if label_text and label_value:
+                details['stakes_details'][label_text.text[:-1].strip()] = label_value.text.strip()
     else:
         details['stakes_details']=None
 
+    logger.info("Scraping referee information")
+    details['referee']=[]
+    referee_div = right_containers.find('div',class_='stickkContainer01 supporterColumn stickkContainer05 mt-5 p-2') 
+    referee_list = referee_div.find('ul',id='refereeList')
+    for li_items in referee_list.find_all('li'):
+        a_tag = li_items.find('a',class_='username')
+        details['referee'].append({"username":a_tag['title'],"profile_url":a_tag['href']})
+    
+    logger.info("Scraping supported information")
+    details['supporters']=[]
+    supporters_div = right_containers.find('div',class_='supporterColumn stickkContainer05 mt-2 p-2')
+    supporters_list = supporters_div.find('ul',id='supporterList')
+    if supporters_list:    
+        for li_items in supporters_list.find_all('li'):
+            a_tag = li_items.find('a',class_='username')
+            details['supporters'].append({"username":a_tag['title'],"profile_url":a_tag['href']})
+    else:
+        details['supporters']=None
 
 
-    dump_HTML_file(commitment_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{details['id']}_main.html")
+    dump_HTML_file(commitment_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{details['Contract ID']}_main.html")
     return details
 
+def scrape_commitment_page(link_to_commitment, is_active,user_id):
+    details = scrape_commitment_details(link_to_commitment,user_id)
+
+    if is_active:
+        return details
 
 
 
 if __name__ == "__main__":
-    load_active_commitment_page(721182,2)
+    from pprint import pprint
+    pprint(scrape_commitment_details('https://www.stickk.com/commitment/details/1009376', True,233320))
+    # load_active_commitment_page(721182,2)
     # from user_profile import *
     # for i in [234678,1,724678,233320]:
     #     foo = fetch_user_profile_page(i)
