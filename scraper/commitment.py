@@ -139,6 +139,43 @@ def scrape_completed_commitments_links(user_id,main_page_soup):
     return completed_commitments
 
 
+def scrape_commitment_details(link_to_commitment, is_active,user_id):
+    details = {}
+    commitment_page = load_web_page(link_to_commitment)
+    commitment_page_soup = make_soup_object(commitment_page)
+
+    details['title'] = commitment_page_soup.find('span',id = 'commitmentTitle').text.strip()
+    details['description'] = commitment_page_soup.find('div',id = 'commitmentSummaryICommitToText').text.strip()
+
+    details_dialog_div = commitment_page_soup.find('div',id='commitmentDetailsDialog')
+    details_dialog_content_div = details_dialog_div.find('div',class_=['stickkContainer02','content'])
+    
+    for c_item in details_dialog_content_div.find_all('div'):
+        label_text = c_item.find('span',class_='label').text.strip()
+        label_value = c_item.find('span',class_='cell2').text.strip()
+        if label_text and label_value:
+            details[label_text] = label_value
+
+    commitment_results_div = commitment_page_soup.find('div',class_ = 'commitmentDetailsDetailsSuccessContainer')
+    details['Successful Periods'] = commitment_results_div.find('div',class_='successfulPeriods').text.strip()
+    details['Unsuccessful Periods'] = commitment_results_div.find('div',class_='failedPeriods').text.strip()
+
+    right_containers = commitment_page_soup.find('div',id='membersCommitmentsRightContainer')
+
+    details['stakes_details']={}
+    stakes_div = right_containers.find('div',class_=['financialColumn','stickkContainer05', 'p-2'])
+    if stakes_div:
+        pass
+    else:
+        details['stakes_details']=None
+
+
+
+    dump_HTML_file(commitment_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{details['id']}_main.html")
+    return details
+
+
+
 
 if __name__ == "__main__":
     load_active_commitment_page(721182,2)

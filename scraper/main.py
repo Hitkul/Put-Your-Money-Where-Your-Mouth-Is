@@ -47,12 +47,11 @@ except:
     logger.info("private_user file not present, creating new")
     private_users = create_private_user_file()
 
-
+# for user_id_to_scrape in [429427,1,233320]:
 logger.info("Starting main loop")
-# while True:
-#     user_id_to_scrape = counter['last id completed']+1
+while True:
+    user_id_to_scrape = counter['last id completed']+1
 
-for user_id_to_scrape in [429427,1,233320]:
     logger.info(f"Staring scraping for user id {user_id_to_scrape}")
 
     logger.info(f"Creating directory str for {user_id_to_scrape}")
@@ -128,12 +127,21 @@ for user_id_to_scrape in [429427,1,233320]:
     else:
         logger.info(f"No completed commitments for {user_id_to_scrape}")
 
+    #TODO: Scrape Active commitments details
+    if active_commitments_present:
+        logger.info(f"Scraping details of active commitments for {user_id_to_scrape}")
 
+        for k,v in active_commitments.items():
+            logger.info(f"Scraping details of {k} | {v}")
+            commitment_details = scrape_commitment_details(k, True,user_id_to_scrape)
+
+    
+    #TODO: Scrape Completed commitments details + Reports + Posts + photos
+    
     dump_counter_file(counter)
     dump_private_user_file(private_users)
     
-    #TODO: Scrape Active commitments details
-    #TODO: Scrape Completed commitments details + Reports + Posts + photos
+    
     
 
 
