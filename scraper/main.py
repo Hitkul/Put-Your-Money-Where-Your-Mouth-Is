@@ -8,6 +8,9 @@ from logging.handlers import TimedRotatingFileHandler
 from utils import *
 from user_profile import *
 
+import shutil
+
+
 
 ################ Logging Setup ##################
 logger = logging.getLogger(f"Stickk data collector - {__name__}")
@@ -46,6 +49,8 @@ except:
     logger.info("private_user file not present, creating new")
     private_users = create_private_user_file()
 
+
+# for user_id_to_scrape in [429427,1, 233320, 234678, 929427]:
 logger.info("Starting main loop")
 while True:
     user_id_to_scrape = counter['last id completed']+1
@@ -64,7 +69,7 @@ while True:
         logger.info(f"{user_id_to_scrape} not found, seems like this is the end, dumping files and exiting")
 
         logger.info(f"deleting directory ../data/users/{user_id_to_scrape}")
-        os.rmdir(f"../data/users/{user_id_to_scrape}")
+        shutil.rmtree(f"../data/users/{user_id_to_scrape}")
         dump_counter_file(counter)
         dump_private_user_file(private_users)
         
@@ -78,7 +83,7 @@ while True:
     if is_private:
         logger.info(f"{user_id_to_scrape} is private, adding it to the list, and dumping file to disk")
         
-        private_users.append(user_id_to_scrape)
+        private_users.append(str(user_id_to_scrape))
         dump_private_user_file(private_users)
 
         counter["Number of private profiles"]+=1
@@ -97,9 +102,14 @@ while True:
     logger.info(f"user info extracted,dumping to file now")
     dump_json(user_info,f'../data/users/{user_id_to_scrape}/userinfo.json')
 
-
+    #TODO: check commitment status
+    # No commitments at all 234678
+    # no active but completed 1
+    # active but not completed 724678
+    # both active and completed 233320
 
     #TODO: Scraper Active commitment links
+
     #TODO: Scraper Completed commitments links
     #TODO: Scrape Active commitments details
     #TODO: Scrape Completed commitments details + Reports + Posts + photos

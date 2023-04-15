@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 import time
 
-
 ################ Logging Setup ##################
 logger = logging.getLogger(f"Stickk data collector - {__name__}")
 logger.setLevel(logging.DEBUG)
