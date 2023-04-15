@@ -250,15 +250,43 @@ def scrape_photos(commitment_page_soup):
         photos.append(photo_dict)
 
     return photos
-    
+
+
+def scrape_reports_list_view(report_list_view):
+    reports_page = []
+    items_div = report_list_view.find('div',class_='items')
+    period_items = items_div.find_all('div',class_='period')
+
+    for p_item in period_items:
+        p_report={}
+        data_div = p_item.find_all('div',recursive=False)[0]
+        value_divs = data_div.find_all('div',recursive=False)
+        for vd in value_divs:
+            p_report[vd.find('label').text.strip()] = vd.find('div',class_='floatRight').text.strip()
+        
+        reports_page.append(p_report)
+
+    return reports_page
+        
 
 def scrape_reports(commitment_page_soup):
+    reports = []
+    report_list_view = commitment_page_soup.find('div',id='reportingPeriodsListView')
+    total_page_numbers = number_of_pages(report_list_view)
+    print(total_page_numbers)
+    reports.extend(scrape_reports_list_view(report_list_view))
+
+    return reports
     
 
 
 
 def scrape_commitment_page(link_to_commitment, is_active,user_id):
     details,commitment_page_soup = scrape_commitment_details(link_to_commitment,user_id)
+
+    reports = scrape_reports(commitment_page_soup)
+
+    return reports
 
     if is_active:
         return details
@@ -272,12 +300,8 @@ def scrape_commitment_page(link_to_commitment, is_active,user_id):
 
 if __name__ == "__main__":
     from pprint import pprint
-    details,posts,photos = scrape_commitment_page('https://www.stickk.com/commitment/details/1012241', False,732608)
-    pprint(details)
-    pprint(posts)
-    pprint(photos)
-    # load_active_commitment_page(721182,2)
-    # from user_profile import *
-    # for i in [234678,1,724678,233320]:
-    #     foo = fetch_user_profile_page(i)
-    #     print(i,check_commitment_status(foo))
+    # reports = scrape_commitment_page('https://www.stickk.com/commitment/details/765439', False,429276)
+    # reports = scrape_commitment_page('https://www.stickk.com/commitment/details/646352', False,233320)
+    reports = scrape_commitment_page('https://www.stickk.com/commitment/details/964364', False,233320)
+    
+    pprint(reports)
