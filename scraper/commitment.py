@@ -206,15 +206,39 @@ def scrape_commitment_details(link_to_commitment,user_id):
 
 
     dump_HTML_file(commitment_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{details['Contract ID']}_main.html")
-    return details
+    return details,commitment_page_soup
+
+def scrape_posts(commitment_page_soup):
+    posts = []
+    wall_post_list_view = commitment_page_soup.find('div',id='wallPostsListView')
+    items_div = wall_post_list_view.find('div',class_='items')
+
+    if items_div.find('span',class_='empty'):
+        logger.info("No post available in this commitment")
+        return posts
+    
+    for wall_post in items_div.find_all('div',class_='wallItem'):
+        post_dict = {}
+        post_dict['author'] = wall_post.find('div',class_='username').text.strip()
+        post_dict['author_link'] = wall_post.find('a',class_='avatarContainer avatarContainerTiny')['href']
+        post_dict['time'] = wall_post.find('div',class_='postTime').text.strip()
+        post_dict['text'] = wall_post.find('td',class_='text').text.strip()
+
+        posts.append(post_dict)
+
+    return posts
+
+
 
 def scrape_commitment_page(link_to_commitment, is_active,user_id):
-    details = scrape_commitment_details(link_to_commitment,user_id)
+    details,commitment_page_soup = scrape_commitment_details(link_to_commitment,user_id)
 
     if is_active:
         return details
+
+    posts = scrape_posts(commitment_page_soup)
     
-    return details
+    return details,posts
 
 
 

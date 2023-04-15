@@ -145,7 +145,7 @@ for user_id_to_scrape in [233320,429276]:
 
         for k,v in completed_commitments.items():
             logger.info(f"Scraping details of {k} | {v}")
-            commitment_details = scrape_commitment_page(k,False,user_id_to_scrape)
+            commitment_details, commitment_posts = scrape_commitment_page(k,False,user_id_to_scrape)
 
             logger.info(f"creating directory for commitment {commitment_details['Contract ID']}")
             if not os.path.exists(f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}"):
@@ -153,6 +153,7 @@ for user_id_to_scrape in [233320,429276]:
                 os.mkdir(f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/photos")
 
             dump_json(commitment_details, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/details.json")
+            dump_json(commitment_posts, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/posts.json")
 
     dump_counter_file(counter)
     dump_private_user_file(private_users)
