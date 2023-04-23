@@ -7,6 +7,7 @@ from logging.handlers import TimedRotatingFileHandler
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
+from cred import *
 
 ################ Logging Setup ##################
 logger = logging.getLogger(f"Stickk data collector - {__name__}")
@@ -66,7 +67,7 @@ def create_user_directory_str(user_id):
     os.mkdir(f"../data/users/{user_id}/HTML_dumps")
 
 
-def load_web_page(url):
+def load_web_page(url,s=None):
     global last_request_time
 
     logger.info("checking if last request was more then a second ago or not")
@@ -79,11 +80,32 @@ def load_web_page(url):
 
     logger.info(f"loading page {url}")
     last_request_time = time.time()
-    page = requests.get(url, headers=header)
+    if s:
+        page = s.get(url,headers=header)
+    else:
+        page = requests.get(url, headers=header)
     
     logger.debug(f"done loading page, Status code {page.status_code}")
     assert page.status_code==200
     return page
+
+def login():
+    logger.info("Logging into stickk")
+    ua = UserAgent()
+    header = {'User-Agent':str(ua.chrome)}
+    s = requests.Session()
+    login_payload = {
+        "LoginForm[username]":username,
+        "LoginForm[password]":password,
+        "LoginForm[rememberMe]":0
+    }
+
+    login_url = "https://www.stickk.com/login"
+
+    post_request = s.post(login_url, data=login_payload, headers=header)
+    logger.debug(f"Login request status code {post_request.status_code}")
+    return s
+
 
 def make_soup_object(page):
     soup = BeautifulSoup(page.content, "html.parser")
@@ -113,4 +135,8 @@ def number_of_pages(list_view):
 
 
 if __name__=="__main__":
-    create_user_directory_str(732608)
+    # create_user_directory_str(732608)
+    s = login()
+    try_url = f'https://www.stickk.com/commitment/periods/765439?ID_page=2&ajax=reportingPeriodsListView'
+    page = load_web_page(try_url,s)
+    print(page.content)

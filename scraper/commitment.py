@@ -287,16 +287,18 @@ def scrape_reports_list_view(report_list_view):
 #             active_commitments_listview = active_commitments_div.find(id='yw0')
 #             active_commitments.update(scrape_active_commitments_listview(active_commitments_listview))
 
-def load_report_page(link_to_commitment,page_number):
+def load_report_page(link_to_commitment,page_number,user_id,s):
     commitment_id = int(link_to_commitment.split("/")[-1].strip())
-
     url = f'https://www.stickk.com/commitment/periods/{commitment_id}?ID_page={page_number}&ajax=reportingPeriodsListView'
-    page = load_web_page(url)
+    
+    list_view_page = load_web_page(url,s)
+    list_view_soup = make_soup_object(list_view_page)
+    dump_HTML_file(list_view_page,f"../data/users/{user_id}/HTML_dumps/commitment_page_{page_number}.html")
 
-    return page
+    return list_view_soup
 
 
-def scrape_reports(commitment_page_soup,link_to_commitment):
+def scrape_reports(commitment_page_soup,link_to_commitment,user_id):
     reports = []
     report_list_view = commitment_page_soup.find('div',id='reportingPeriodsListView')
     total_page_numbers = number_of_pages(report_list_view)
@@ -304,20 +306,20 @@ def scrape_reports(commitment_page_soup,link_to_commitment):
     reports.extend(scrape_reports_list_view(report_list_view))
 
     if total_page_numbers>1:
+        s = login()
         for page_number in range(2, total_page_numbers+1):
             logger.info(f"scraping reports on page {page_number}, total pages {total_page_numbers}") 
-            page = load_report_page(link_to_commitment,page_number)
-            print(page.content)
-            break
-    
-    
+            list_view_soup = load_report_page(link_to_commitment,page_number,user_id,s)
+            report_list_view = list_view_soup.find('div',id='reportingPeriodsListView')
+            reports.extend(scrape_reports_list_view(report_list_view))
+        s.close()
     return reports
     
 
 def scrape_commitment_page(link_to_commitment, is_active,user_id):
     details,commitment_page_soup = scrape_commitment_details(link_to_commitment,user_id)
 
-    reports = scrape_reports(commitment_page_soup,link_to_commitment)
+    reports = scrape_reports(commitment_page_soup,link_to_commitment,user_id)
 
     return reports
 
@@ -334,6 +336,7 @@ def scrape_commitment_page(link_to_commitment, is_active,user_id):
 if __name__ == "__main__":
     from pprint import pprint
     reports = scrape_commitment_page('https://www.stickk.com/commitment/details/765439', False,429276)
+    print(len(reports))
     # reports = scrape_commitment_page('https://www.stickk.com/commitment/details/646352', False,233320)
     # reports = scrape_commitment_page('https://www.stickk.com/commitment/details/964364', False,233320)
     
