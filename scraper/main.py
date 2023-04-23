@@ -50,7 +50,8 @@ except:
 # for user_id_to_scrape in [429427,1,233320,725101,721182,429276,743320]:
 logger.info("Starting main loop")
 while True:
-    user_id_to_scrape = counter['last id completed']+1
+    counter['last id completed'] += 1
+    user_id_to_scrape = counter['last id completed']
     logger.info(f"Staring scraping for user id {user_id_to_scrape}")
 
     logger.info(f"Creating directory str for {user_id_to_scrape}")
