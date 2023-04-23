@@ -189,9 +189,12 @@ def scrape_commitment_details(link_to_commitment,user_id):
     details['referee']=[]
     referee_div = right_containers.find('div',class_='stickkContainer01 supporterColumn stickkContainer05 mt-5 p-2') 
     referee_list = referee_div.find('ul',id='refereeList')
-    for li_items in referee_list.find_all('li'):
-        a_tag = li_items.find('a',class_='username')
-        details['referee'].append({"username":a_tag['title'],"profile_url":a_tag['href']})
+    if referee_list:
+        for li_items in referee_list.find_all('li'):
+            a_tag = li_items.find('a',class_='username')
+            details['referee'].append({"username":a_tag['title'],"profile_url":a_tag['href']})
+    else:
+        details['referee']=None
     
     logger.info("Scraping supported information")
     details['supporters']=[]
@@ -235,6 +238,11 @@ def scrape_posts(commitment_page_soup):
 def scrape_photos(commitment_page_soup):
     photos = []
     wall_photos_list_view = commitment_page_soup.find('div',id='albumContainer')
+
+    if not wall_photos_list_view:
+        logger.info(f"No album div... probably due to privacy settings...")
+        return photos
+    
     items_ul = wall_photos_list_view.find('ul',class_='items')
 
     if items_ul.find('span',class_='empty'):
@@ -276,7 +284,7 @@ def load_report_page(link_to_commitment,page_number,user_id,s):
     
     list_view_page = load_web_page(url,s)
     list_view_soup = make_soup_object(list_view_page)
-    dump_HTML_file(list_view_page,f"../data/users/{user_id}/HTML_dumps/commitment_page_{page_number}.html")
+    dump_HTML_file(list_view_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{commitment_id}_page_{page_number}.html")
 
     return list_view_soup
 
@@ -298,7 +306,7 @@ def scrape_reports(commitment_page_soup,link_to_commitment,user_id,s):
     return reports
     
 
-def scrape_commitment_page(link_to_commitment, is_active,user_id,s):
+def scrape_commitment_page(link_to_commitment, is_active,user_id,s=None):
     details,commitment_page_soup = scrape_commitment_details(link_to_commitment,user_id)
 
     if is_active:
