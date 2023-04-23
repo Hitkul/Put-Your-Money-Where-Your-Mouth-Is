@@ -139,13 +139,13 @@ for user_id_to_scrape in [233320,429276]:
             dump_json(commitment_details, f"../data/users/{user_id_to_scrape}/active_commitments/{commitment_details['Contract ID']}.json")
 
     
-    #TODO: Scrape Completed commitments details + Reports + Posts + photos
     if completed_commitments_present:
         logger.info(f"Scraping details of completed commitments for {user_id_to_scrape}")
 
+        s = login()
         for k,v in completed_commitments.items():
             logger.info(f"Scraping details of {k} | {v}")
-            commitment_details, commitment_posts, commitment_photos = scrape_commitment_page(k,False,user_id_to_scrape)
+            commitment_details, commitment_posts, commitment_photos, commitment_reports = scrape_commitment_page(k,False,user_id_to_scrape,s)
 
             logger.info(f"creating directory for commitment {commitment_details['Contract ID']}")
             if not os.path.exists(f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}"):
@@ -154,7 +154,9 @@ for user_id_to_scrape in [233320,429276]:
             dump_json(commitment_details, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/details.json")
             dump_json(commitment_posts, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/posts.json")
             dump_json(commitment_photos, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/photos.json")
-
+            dump_json(commitment_reports, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/reports.json")
+        s.close()
+    
     dump_counter_file(counter)
     dump_private_user_file(private_users)
     
