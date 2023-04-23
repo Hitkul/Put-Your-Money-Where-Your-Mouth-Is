@@ -47,6 +47,17 @@ except:
     logger.info("private_user file not present, creating new")
     private_users = create_private_user_file()
 
+logger.info("Reading ../data/users_not_found.txt")
+try:
+    with open("../data/users_not_found.txt",'r') as fp:
+        users_not_found = fp.readlines()
+
+    users_not_found = [int(i.strip()) for i in users_not_found]
+except:
+    logger.info("users_not_found file not present, creating new")
+    users_not_found = create_user_not_found_file()
+
+consecutive_not_found_counter = 0
 # for user_id_to_scrape in [429427,1,233320,725101,721182,429276,743320]:
 logger.info("Starting main loop")
 while True:
@@ -64,16 +75,26 @@ while True:
     is_present = is_user_present(main_page_soup)
 
     if not is_present:
-        logger.info(f"{user_id_to_scrape} not found, seems like this is the end, dumping files and exiting")
+        logger.info(f"{user_id_to_scrape} not found")
 
         logger.info(f"deleting directory ../data/users/{user_id_to_scrape}")
         shutil.rmtree(f"../data/users/{user_id_to_scrape}")
-        dump_counter_file(counter)
-        dump_private_user_file(private_users)
         
-        break
+        counter["Number of user not found profiles"]+=1
+        users_not_found.append(str(user_id_to_scrape))
+        
+        dump_counter_file(counter)
+        dump_user_not_found_file(users_not_found)
+        consecutive_not_found_counter+=1
+
+        if consecutive_not_found_counter>20:
+            logger.info("more then 20 consecutive users missing.... probably end of the road...exiting for now")
+            break
+        else:
+            continue
 
     logger.info(f"{user_id_to_scrape} is present")
+    consecutive_not_found_counter=0
 
     logger.info(f"Checking if user {user_id_to_scrape} is private")
     is_private = is_user_private(main_page_soup)

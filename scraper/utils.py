@@ -31,6 +31,7 @@ last_request_time = 0
 
 def create_counter_file():
     counter = {"last id completed":0,
+    "Number of user not found profiles":0,
     "Number of public profiles":0,
     "Number of private profiles":0,
     "Number of active commitments":0,
@@ -55,6 +56,17 @@ def create_private_user_file():
 def dump_private_user_file(private_users):
     with open("../data/private_users.txt",'w') as fp:
         fp.write("\n".join(private_users))
+
+def create_user_not_found_file():
+    users_not_found = []
+    with open("../data/users_not_found.txt",'w') as fp:
+        fp.write("\n".join(users_not_found))
+
+    return users_not_found
+
+def dump_user_not_found_file(users_not_found):
+    with open("../data/users_not_found.txt",'w') as fp:
+        fp.write("\n".join(users_not_found))
 
 def create_user_directory_str(user_id):
     if os.path.exists(f"../data/users/{user_id}"):
