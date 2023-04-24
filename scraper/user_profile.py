@@ -60,7 +60,7 @@ def scrape_user_info(soup):
     profile_side_container = soup.find(id='othersProfileSideContainer')
     
     profile_image_div = profile_side_container.find(id='othersProfileWidgetImage')
-    user_info["img_link"] = profile_image_div.find('img')['src'].strip()
+    user_info["img_link"] = profile_image_div.find_all('img')[-1]['src'].strip()
 
     profile_username_div = profile_side_container.find(id='othersProfileUsername')
     user_info["username"] = profile_username_div.text.strip()
