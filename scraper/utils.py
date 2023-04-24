@@ -54,6 +54,7 @@ def create_private_user_file():
     return private_users
 
 def dump_private_user_file(private_users):
+    private_users = [str(i) for i in private_users]
     with open("../data/private_users.txt",'w') as fp:
         fp.write("\n".join(private_users))
 
@@ -65,6 +66,7 @@ def create_user_not_found_file():
     return users_not_found
 
 def dump_user_not_found_file(users_not_found):
+    users_not_found = [str(i) for i in users_not_found]
     with open("../data/users_not_found.txt",'w') as fp:
         fp.write("\n".join(users_not_found))
 

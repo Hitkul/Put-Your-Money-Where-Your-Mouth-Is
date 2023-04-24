@@ -177,7 +177,6 @@ while True:
         s.close()
     
     dump_counter_file(counter)
-    dump_private_user_file(private_users)
     
     
     
