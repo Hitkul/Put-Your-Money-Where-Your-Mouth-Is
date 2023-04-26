@@ -192,7 +192,10 @@ def scrape_commitment_details(link_to_commitment,user_id):
     if referee_list:
         for li_items in referee_list.find_all('li'):
             a_tag = li_items.find('a',class_='username')
-            details['referee'].append({"username":a_tag['title'],"profile_url":a_tag['href']})
+            if a_tag:
+                details['referee'].append({"username":a_tag['title'],"profile_url":a_tag['href']})
+            else:
+                details['referee']=None        
     else:
         details['referee']=None
     
