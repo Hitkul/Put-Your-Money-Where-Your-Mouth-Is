@@ -149,7 +149,10 @@ def scrape_commitment_details(link_to_commitment,user_id):
     description_tag = commitment_page_soup.find('div',id = 'commitmentSummaryICommitToText')
     if not description_tag:
         description_tag = commitment_page_soup.find('div',id = 'iCommitToTitleText')
-    details['description'] = description_tag.text.strip()
+    if description_tag:
+        details['description'] = description_tag.text.strip()
+    else:
+        details['description']=None
 
     logger.info("Scraping Details dialog")
     details_dialog_div = commitment_page_soup.find('div',id='commitmentDetailsDialogContent')
