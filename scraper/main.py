@@ -87,8 +87,8 @@ while True:
         dump_user_not_found_file(users_not_found)
         consecutive_not_found_counter+=1
 
-        if consecutive_not_found_counter>20:
-            logger.info("more then 20 consecutive users missing.... probably end of the road...exiting for now")
+        if consecutive_not_found_counter>100:
+            logger.info("more then 100 consecutive users missing.... probably end of the road...exiting for now")
             break
         else:
             continue
