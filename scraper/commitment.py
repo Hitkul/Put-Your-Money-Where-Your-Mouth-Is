@@ -144,6 +144,13 @@ def scrape_commitment_details(link_to_commitment,user_id):
     commitment_page = load_web_page(link_to_commitment)
     commitment_page_soup = make_soup_object(commitment_page)
 
+    error_div = commitment_page_soup.find('div',id = 'errorContainer')
+
+    if error_div:
+        logger.info("Commitment not found")
+        dump_HTML_file(commitment_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{details['Contract ID']}_main.html")
+        return details,commitment_page_soup,False
+
     logger.info("Basic details extraction")
     details['title'] = commitment_page_soup.find('span',id = 'commitmentTitle').text.strip()
     description_tag = commitment_page_soup.find('div',id = 'commitmentSummaryICommitToText')
@@ -215,7 +222,7 @@ def scrape_commitment_details(link_to_commitment,user_id):
 
 
     dump_HTML_file(commitment_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{details['Contract ID']}_main.html")
-    return details,commitment_page_soup
+    return details,commitment_page_soup,True
 
 def scrape_posts(commitment_page_soup):
     posts = []
@@ -313,7 +320,10 @@ def scrape_reports(commitment_page_soup,link_to_commitment,user_id,s):
     
 
 def scrape_commitment_page(link_to_commitment, is_active,user_id,s=None):
-    details,commitment_page_soup = scrape_commitment_details(link_to_commitment,user_id)
+    details,commitment_page_soup,is_found = scrape_commitment_details(link_to_commitment,user_id)
+
+    if not is_found:
+        return details
 
     if is_active:
         return details
