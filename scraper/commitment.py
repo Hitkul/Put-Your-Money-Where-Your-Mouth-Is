@@ -148,6 +148,7 @@ def scrape_commitment_details(link_to_commitment,user_id):
 
     if error_div:
         logger.info("Commitment not found")
+        details['Contract ID'] = link_to_commitment.split("/")[-1].strip()
         dump_HTML_file(commitment_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{details['Contract ID']}_main.html")
         return details,commitment_page_soup,False
 
