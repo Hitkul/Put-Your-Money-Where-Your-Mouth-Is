@@ -71,14 +71,14 @@ def dump_user_not_found_file(users_not_found):
         fp.write("\n".join(users_not_found))
 
 def create_user_directory_str(user_id):
-    if os.path.exists(f"../data/users/{user_id}"):
+    if os.path.exists(f"../data/users1/{user_id}"):
         logger.info("Directory already exists")
         return
     
-    os.mkdir(f"../data/users/{user_id}")
-    os.mkdir(f"../data/users/{user_id}/completed_commitments")
-    os.mkdir(f"../data/users/{user_id}/active_commitments")
-    os.mkdir(f"../data/users/{user_id}/HTML_dumps")
+    os.mkdir(f"../data/users1/{user_id}")
+    os.mkdir(f"../data/users1/{user_id}/completed_commitments")
+    os.mkdir(f"../data/users1/{user_id}/active_commitments")
+    os.mkdir(f"../data/users1/{user_id}/HTML_dumps")
 
 
 def load_web_page(url,s=None):

@@ -30,7 +30,7 @@ def fetch_user_profile_page(user_id):
     url = f"https://www.stickk.com/commitment/{user_id}"
     main_page = load_web_page(url)
     main_page_soup = make_soup_object(main_page)
-    dump_HTML_file(main_page,f"../data/users/{user_id}/HTML_dumps/main_page.html")
+    dump_HTML_file(main_page,f"../data/users1/{user_id}/HTML_dumps/main_page.html")
     return main_page_soup
 
 def is_user_present(soup):

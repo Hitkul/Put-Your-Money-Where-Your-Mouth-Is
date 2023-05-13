@@ -62,7 +62,7 @@ def load_active_commitment_page(user_id,page_number):
     url = f'https://www.stickk.com/commitment/{user_id}?ajax=yw0&id_page={page_number}'
     page = load_web_page(url)
     page_soup = make_soup_object(page)
-    dump_HTML_file(page,f"../data/users/{user_id}/HTML_dumps/active_page_{page_number}.html")
+    dump_HTML_file(page,f"../data/users1/{user_id}/HTML_dumps/active_page_{page_number}.html")
     return page_soup
 
 
@@ -109,7 +109,7 @@ def load_completed_commitment_page(user_id,page_number):
     url = f'https://www.stickk.com/commitment/{user_id}?ajax=yw2&id_page={page_number}'
     page = load_web_page(url)
     page_soup = make_soup_object(page)
-    dump_HTML_file(page,f"../data/users/{user_id}/HTML_dumps/completed_page_{page_number}.html")
+    dump_HTML_file(page,f"../data/users1/{user_id}/HTML_dumps/completed_page_{page_number}.html")
     return page_soup
 
 
@@ -149,7 +149,7 @@ def scrape_commitment_details(link_to_commitment,user_id):
     if error_div:
         logger.info("Commitment not found")
         details['Contract ID'] = link_to_commitment.split("/")[-1].strip()
-        dump_HTML_file(commitment_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{details['Contract ID']}_main.html")
+        dump_HTML_file(commitment_page,f"../data/users1/{user_id}/HTML_dumps/commitment_id_{details['Contract ID']}_main.html")
         return details,commitment_page_soup,False
 
     logger.info("Basic details extraction")
@@ -222,7 +222,7 @@ def scrape_commitment_details(link_to_commitment,user_id):
         details['supporters']=None
 
 
-    dump_HTML_file(commitment_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{details['Contract ID']}_main.html")
+    dump_HTML_file(commitment_page,f"../data/users1/{user_id}/HTML_dumps/commitment_id_{details['Contract ID']}_main.html")
     return details,commitment_page_soup,True
 
 def scrape_posts(commitment_page_soup):
@@ -298,7 +298,7 @@ def load_report_page(link_to_commitment,page_number,user_id,s):
     
     list_view_page = load_web_page(url,s)
     list_view_soup = make_soup_object(list_view_page)
-    dump_HTML_file(list_view_page,f"../data/users/{user_id}/HTML_dumps/commitment_id_{commitment_id}_page_{page_number}.html")
+    dump_HTML_file(list_view_page,f"../data/users1/{user_id}/HTML_dumps/commitment_id_{commitment_id}_page_{page_number}.html")
 
     return list_view_soup
 

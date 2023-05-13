@@ -77,8 +77,8 @@ while True:
     if not is_present:
         logger.info(f"{user_id_to_scrape} not found")
 
-        logger.info(f"deleting directory ../data/users/{user_id_to_scrape}")
-        shutil.rmtree(f"../data/users/{user_id_to_scrape}")
+        logger.info(f"deleting directory ../data/users1/{user_id_to_scrape}")
+        shutil.rmtree(f"../data/users1/{user_id_to_scrape}")
         
         counter["Number of user not found profiles"]+=1
         users_not_found.append(str(user_id_to_scrape))
@@ -118,7 +118,7 @@ while True:
     user_info = scrape_user_info(main_page_soup)
 
     logger.info(f"user info extracted,dumping to file now")
-    dump_json(user_info,f'../data/users/{user_id_to_scrape}/userinfo.json')
+    dump_json(user_info,f'../data/users1/{user_id_to_scrape}/userinfo.json')
 
     logger.info(f"Checking commitment status for {user_id_to_scrape}")
 
@@ -132,7 +132,7 @@ while True:
         
         logger.info(f"{len(active_commitments)} found, updating the counter and dumping to file")
         counter['Number of active commitments']+=len(active_commitments)
-        dump_json(active_commitments, f"../data/users/{user_id_to_scrape}/active.json")
+        dump_json(active_commitments, f"../data/users1/{user_id_to_scrape}/active.json")
     else:
         logger.info(f"No active commitmtents for {user_id_to_scrape}")
 
@@ -143,7 +143,7 @@ while True:
 
         logger.info(f"{len(completed_commitments)} found, updating the counter and dumping to file")
         counter['Number of completed commitments']+=len(completed_commitments)
-        dump_json(completed_commitments, f"../data/users/{user_id_to_scrape}/completed.json")
+        dump_json(completed_commitments, f"../data/users1/{user_id_to_scrape}/completed.json")
     else:
         logger.info(f"No completed commitments for {user_id_to_scrape}")
 
@@ -155,7 +155,7 @@ while True:
             logger.info(f"Scraping details of {k} | {v}")
             commitment_details = scrape_commitment_page(k,True,user_id_to_scrape)
 
-            dump_json(commitment_details, f"../data/users/{user_id_to_scrape}/active_commitments/{commitment_details['Contract ID']}.json")
+            dump_json(commitment_details, f"../data/users1/{user_id_to_scrape}/active_commitments/{commitment_details['Contract ID']}.json")
 
     
     if completed_commitments_present:
@@ -167,13 +167,13 @@ while True:
             commitment_details, commitment_posts, commitment_photos, commitment_reports = scrape_commitment_page(k,False,user_id_to_scrape,s)
 
             logger.info(f"creating directory for commitment {commitment_details['Contract ID']}")
-            if not os.path.exists(f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}"):
-                os.mkdir(f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}")
+            if not os.path.exists(f"../data/users1/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}"):
+                os.mkdir(f"../data/users1/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}")
 
-            dump_json(commitment_details, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/details.json")
-            dump_json(commitment_posts, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/posts.json")
-            dump_json(commitment_photos, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/photos.json")
-            dump_json(commitment_reports, f"../data/users/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/reports.json")
+            dump_json(commitment_details, f"../data/users1/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/details.json")
+            dump_json(commitment_posts, f"../data/users1/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/posts.json")
+            dump_json(commitment_photos, f"../data/users1/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/photos.json")
+            dump_json(commitment_reports, f"../data/users1/{user_id_to_scrape}/completed_commitments/{commitment_details['Contract ID']}/reports.json")
         s.close()
     
     dump_counter_file(counter)
