@@ -267,7 +267,7 @@ def scrape_photos(commitment_page_soup):
         photo_dict = {}
         photo_dict['date'] = ph_tags.find('div',class_='date').text.strip()
         photo_dict['title'] = ph_tags.find('a')['title'].strip()
-        photo_dict['src'] = ph_tags.find('img')['src']
+        photo_dict['src'] = ph_tags.find_all('img')[-1]['src']
 
         photos.append(photo_dict)
 
