@@ -56,6 +56,9 @@ def scrape_active_commitments_listview(active_commitments_listview):
         title_a_tag = title_div.find('a')
         active_commitments_page['https://www.stickk.com'+title_a_tag['href']] = title_a_tag.text.strip()
     
+    #erros commitments = [536441,540504,540894,546758,548979,553075,557464,557673,568979,571805]
+    if 'https://www.stickk.com/commitment/details/571805' in active_commitments_page:
+        del active_commitments_page['https://www.stickk.com/commitment/details/571805']
     return active_commitments_page
 
 def load_active_commitment_page(user_id,page_number):

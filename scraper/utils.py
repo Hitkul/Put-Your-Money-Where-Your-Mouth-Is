@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from cred import *
 
+
 ################ Logging Setup ##################
 logger = logging.getLogger(f"Stickk data collector - {__name__}")
 logger.setLevel(logging.DEBUG)
@@ -150,7 +151,6 @@ def number_of_pages(list_view):
 
 if __name__=="__main__":
     # create_user_directory_str(732608)
-    s = login()
-    try_url = f'https://www.stickk.com/commitment/periods/765439?ID_page=2&ajax=reportingPeriodsListView'
-    page = load_web_page(try_url,s)
+    try_url = f'https://www.stickk.com/commitment/577439'
+    page = load_web_page(try_url)
     print(page.content)

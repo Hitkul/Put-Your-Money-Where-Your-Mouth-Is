@@ -68,6 +68,20 @@ while True:
     logger.info(f"Creating directory str for {user_id_to_scrape}")
     create_user_directory_str(user_id_to_scrape)
 
+    HTTP_500_error_users = [431605,432721]
+    if user_id_to_scrape in HTTP_500_error_users:
+        logger.info(f"{user_id_to_scrape} HTTP 500 error")
+
+        logger.info(f"deleting directory ../data/users1/{user_id_to_scrape}")
+        shutil.rmtree(f"../data/users1/{user_id_to_scrape}")
+
+        counter["Number of user not found profiles"]+=1
+        users_not_found.append(str(user_id_to_scrape))
+        dump_counter_file(counter)
+        dump_user_not_found_file(users_not_found)
+
+        continue
+
     logger.info(f"Feathing main user page for id {user_id_to_scrape}")
     main_page_soup = fetch_user_profile_page(user_id_to_scrape)
 
