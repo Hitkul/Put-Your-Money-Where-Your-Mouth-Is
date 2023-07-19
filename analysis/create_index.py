@@ -19,9 +19,7 @@ user_index = defaultdict(dict)
 commitment_index = defaultdict(dict)
 
 error_ids = []
-# for user_id in tqdm(range(1, counter['last id completed']+1)):
-for user_id in tqdm(range(1, 1000)):
-    user_id = random.randint(1,counter['last id completed']+1)
+for user_id in tqdm(range(1, counter['last id completed']+1)):
     if user_id in private_users or user_id in user_not_found:
         continue
     
